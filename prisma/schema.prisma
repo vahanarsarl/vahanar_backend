@@ -1,0 +1,52 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Vehicle {
+  id                String     @id @default(uuid())
+  name              String
+  type              String     // Car, Bike, Van, SUV
+  brand             String
+  model             String
+  pricePerDay       Float
+  discountPercentage Float?
+  location          Location   @relation(fields: [locationId], references: [id])
+  locationId        String
+  features          Json       // seats, gearbox, fuel, etc.
+  images            String[]   // array of URLs
+  agencyName        String
+  rating            Float?
+  availableFrom     DateTime
+  availableTo       DateTime
+  inquiries         Inquiry[]
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+}
+
+model Location {
+  id        String    @id @default(uuid())
+  city      String
+  address   String
+  vehicles  Vehicle[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Inquiry {
+  id        String   @id @default(uuid())
+  userName  String
+  phone     String
+  message   String
+  vehicle   Vehicle  @relation(fields: [vehicleId], references: [id])
+  vehicleId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+} 
